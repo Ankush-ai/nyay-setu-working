@@ -53,8 +53,8 @@ export default function HowItWorks() {
                         style={{
                             display: 'inline-block',
                             padding: '0.75rem 1.5rem',
-                            background: 'rgba(139, 92, 246, 0.1)',
-                            border: '1px solid rgba(139, 92, 246, 0.3)',
+                            background: 'var(--bg-glass)',
+                            border: 'var(--border-glass)',
                             borderRadius: '2rem',
                             marginBottom: '1.5rem'
                         }}
@@ -105,23 +105,10 @@ export default function HowItWorks() {
 
                 {/* Steps */}
                 <div style={{ position: 'relative' }}>
-                    {/* Connection Line */}
-                    <div className="hiw-connector" style={{
-                        position: 'absolute',
-                        top: '80px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        width: '80%',
-                        height: '2px',
-                        background: 'linear-gradient(90deg, #8b5cf6 0%, #6366f1 33%, #ec4899 66%, #10b981 100%)',
-                        opacity: 0.25,
-                        zIndex: 0,
-                    }} />
-
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                        gap: '3rem',
+                        gap: '4rem',
                         position: 'relative',
                         zIndex: 1
                     }}>
@@ -134,36 +121,27 @@ export default function HowItWorks() {
                                 transition={{ delay: idx * 0.15 }}
                                 style={{
                                     textAlign: 'center',
-                                    position: 'relative'
+                                    position: 'relative',
+                                    padding: '1.5rem',
+                                    borderRadius: '1.5rem',
+                                    transition: 'all 0.3s ease',
+                                    cursor: 'pointer',
+                                    background: 'var(--bg-glass)',
+                                    border: 'var(--border-glass)',
+                                    backdropFilter: 'var(--glass-blur)',
+                                    boxShadow: 'var(--shadow-glass)'
                                 }}
                             >
-                                {/* Step Number Background */}
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '-20px',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    fontSize: '6rem',
-                                    fontWeight: '900',
-                                    color: step.color,
-                                    opacity: 0.05,
-                                    zIndex: 0,
-                                    lineHeight: 1
-                                }}>
-                                    {step.number}
-                                </div>
-
-                                {/* Icon Container */}
                                 <motion.div
-                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                    whileHover={{ scale: 1.12, rotate: 4, y: -8 }}
                                     transition={{ type: "spring", stiffness: 300 }}
                                     style={{
                                         width: '120px',
                                         height: '120px',
                                         margin: '0 auto 2rem',
-                                        background: 'var(--bg-glass-strong)', // Glass effect
+                                        background: 'var(--bg-glass)',
                                         backdropFilter: 'var(--glass-blur)',
-                                        border: `3px solid ${step.color}40`,
+                                        border: 'var(--border-glass)',
                                         borderRadius: '2rem',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -180,10 +158,10 @@ export default function HowItWorks() {
                                 <div style={{
                                     display: 'inline-block',
                                     padding: '0.5rem 1rem',
-                                    background: `${step.color}10`,
-                                    border: `2px solid ${step.color}30`,
+                                    background: 'var(--bg-glass)',
+                                    border: 'var(--border-glass)',
                                     borderRadius: '2rem',
-                                    color: step.color,
+                                    color: 'var(--text-main)',
                                     fontWeight: '900',
                                     fontSize: '0.875rem',
                                     marginBottom: '1rem',
@@ -194,8 +172,9 @@ export default function HowItWorks() {
 
                                 {/* Title */}
                                 <h3 style={{
-                                    fontSize: '1.5rem',
-                                    fontWeight: '800',
+                                    fontSize: '1.7rem',
+                                    fontWeight: '900',
+                                    lineHeight: '1.3',
                                     color: 'var(--text-main)',
                                     marginBottom: '1rem'
                                 }}>
@@ -207,7 +186,7 @@ export default function HowItWorks() {
                                     color: 'var(--text-secondary)',
                                     fontSize: '1rem',
                                     lineHeight: '1.6',
-                                    maxWidth: '300px',
+                                    maxWidth: '320px',
                                     margin: '0 auto'
                                 }}>
                                     {step.description}
@@ -215,14 +194,27 @@ export default function HowItWorks() {
 
                                 {/* Arrow for desktop */}
                                 {idx < steps.length - 1 && (
-                                    <div className="hiw-arrow" style={{
-                                        position: 'absolute',
-                                        top: '60px',
-                                        right: '-50px',
-                                        color: step.color,
-                                        opacity: 0.5,
-                                    }}>
-                                        <ArrowRight size={32} />
+                                    <div
+                                        className="hiw-arrow"
+                                        style={{
+                                            position: 'absolute',
+                                            top: '72px',
+                                            right: '-65px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            color: 'var(--text-secondary)',
+                                            zIndex: 10,
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                width: '35px',
+                                                height: '2px',
+                                                background: 'var(--text-secondary)',
+                                                opacity: 0.4,
+                                            }}
+                                        />
+                                        <ArrowRight size={24} />
                                     </div>
                                 )}
                             </motion.div>
@@ -277,3 +269,4 @@ export default function HowItWorks() {
         </section>
     );
 }
+

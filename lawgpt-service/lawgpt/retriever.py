@@ -8,10 +8,18 @@ a module-level `get_retriever()` that returns a cached retriever instance.
 from pathlib import Path
 from typing import Optional
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
-# pyrefly: ignore [missing-import]
-from langchain.schema import Document
+try:
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    from langchain_community.vectorstores import FAISS
+    # pyrefly: ignore [missing-import]
+    from langchain.schema import Document
+    _HAS_LANGCHAIN = True
+except Exception:
+    # Allow the module to be imported in environments without langchain for tests
+    HuggingFaceEmbeddings = None  # type: ignore
+    FAISS = None  # type: ignore
+    Document = object
+    _HAS_LANGCHAIN = False
 
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
@@ -26,6 +34,8 @@ _embeddings: Optional[HuggingFaceEmbeddings] = None
 def _get_embeddings() -> HuggingFaceEmbeddings:
     """Return the singleton embedding model instance."""
     global _embeddings
+    if not _HAS_LANGCHAIN:
+        raise ImportError("langchain_community is not available in this environment")
     if _embeddings is None:
         _embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
     return _embeddings
@@ -40,6 +50,8 @@ def load_vectorstore() -> FAISS:
         FileNotFoundError: If the index directory does not exist.
     """
     global _vectorstore
+    if not _HAS_LANGCHAIN:
+        raise ImportError("langchain_community is not available in this environment")
     if _vectorstore is not None:
         return _vectorstore
 
@@ -67,14 +79,43 @@ def retrieve(query: str, k: int = 3) -> list[Document]:
     Returns:
         A list of LangChain Document objects with page_content and metadata.
     """
+    # If langchain is not available, callers in tests should monkeypatch this function.
+    if not _HAS_LANGCHAIN:
+        raise ImportError("langchain_community is not available in this environment")
     vs: FAISS = load_vectorstore()
     results: list[Document] = vs.similarity_search(query, k=k)
     return results
 
 
+def retrieve_with_scores(query: str, k: int = 5) -> list[dict]:
+    """
+    Retrieve document chunks along with their relevance scores.
+    """
+    if not _HAS_LANGCHAIN:
+        raise ImportError("langchain_community is not available in this environment")
+    vs: FAISS = load_vectorstore()
+    results_with_scores = vs.similarity_search_with_score(query, k=k)
+    
+    formatted_results = []
+    for doc, score in results_with_scores:
+        # L2 distance: lower is better (usually 0.0 to 2.0). Map to 0-100% similarity
+        sim_score = max(0.0, min(1.0, 1.0 - (float(score) / 2.0)))
+        relevance = round(sim_score * 100, 1)
+        
+        formatted_results.append({
+            "page_content": doc.page_content,
+            "source": doc.metadata.get("source", "unknown"),
+            "page": doc.metadata.get("page", 0),
+            "relevance": relevance
+        })
+    return formatted_results
+
+
 def get_chunk_count() -> Optional[int]:
     """Return the number of vectors in the loaded FAISS index, or None."""
     try:
+        if not _HAS_LANGCHAIN:
+            return None
         vs: FAISS = load_vectorstore()
         return vs.index.ntotal
     except (FileNotFoundError, Exception):

@@ -3,9 +3,17 @@
         "nav": {
             "home": "Home",
             "features": "Features",
+            "upcomingFeatures":"Upcoming Features",
             "constitution": "Constitution",
             "aiAssistant": "AI Assistant",
-            "about": "About"
+            "about": "About",
+            "contact": "Contact Us",
+            "portal": "Portal",
+            "roles":{
+                "litigant": "Litigant",
+                "lawyer": "Lawyer",
+                "judge": "Judge"
+            }
         },
         "cta": {
             "login": "Login",
