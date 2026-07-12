@@ -32,6 +32,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+                 <!-- JSON Schema validation for Groq AI responses -->
+<dependency>
+    <groupId>com.networknt</groupId>
+    <artifactId>json-schema-validator</artifactId>
+    <version>1.5.6</version>
+</dependency>
 
             <!-- Spring Cloud BOM -->
             <dependency>
